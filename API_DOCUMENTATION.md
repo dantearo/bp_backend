@@ -413,12 +413,441 @@ The system generates alerts for requests approaching flight time:
 
 ---
 
+# Operations API
+
+## Request Processing Endpoints
+
+### Mark Request as Received
+```http
+PUT /api/v1/operations/requests/:id/receive
+```
+
+**Roles Required**: Operations Staff, Operations Admin, Management, Super Admin
+
+**Response:**
+```json
+{
+  "message": "Request marked as received",
+  "flight_request": {
+    "id": 1,
+    "status": "received",
+    "received_at": "2025-01-10T14:30:00Z"
+  }
+}
+```
+
+### Start Review Process
+```http
+PUT /api/v1/operations/requests/:id/review
+```
+
+**Response:**
+```json
+{
+  "message": "Request under review",
+  "flight_request": {
+    "id": 1,
+    "status": "under_review",
+    "reviewed_at": "2025-01-10T14:45:00Z"
+  }
+}
+```
+
+### Begin Processing
+```http
+PUT /api/v1/operations/requests/:id/process
+```
+
+**Response:**
+```json
+{
+  "message": "Request under process",
+  "flight_request": {
+    "id": 1,
+    "status": "under_process",
+    "processed_at": "2025-01-10T15:00:00Z"
+  }
+}
+```
+
+### Mark as Unable (with reason)
+```http
+PUT /api/v1/operations/requests/:id/unable
+```
+
+**Request Body:**
+```json
+{
+  "reason": "Aircraft unavailable due to maintenance"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Request marked as unable",
+  "flight_request": {
+    "id": 1,
+    "status": "unable",
+    "unable_reason": "Aircraft unavailable due to maintenance",
+    "unable_at": "2025-01-10T15:30:00Z"
+  }
+}
+```
+
+### Mark as Complete
+```http
+PUT /api/v1/operations/requests/:id/complete
+```
+
+**Response:**
+```json
+{
+  "message": "Request completed",
+  "flight_request": {
+    "id": 1,
+    "status": "completed",
+    "completed_at": "2025-01-10T16:00:00Z"
+  }
+}
+```
+
+### Modify Request Details
+```http
+PUT /api/v1/operations/requests/:id/modify
+```
+
+**Request Body:**
+```json
+{
+  "flight_request": {
+    "flight_date": "2025-01-20",
+    "number_of_passengers": 5,
+    "flight_request_legs_attributes": [
+      {
+        "id": 1,
+        "departure_airport": "DXB",
+        "arrival_airport": "LAX",
+        "departure_time": "10:00",
+        "arrival_time": "18:00"
+      }
+    ]
+  }
+}
+```
+
+## Alert and Notification System
+
+### Get Current Alerts
+```http
+GET /api/v1/operations/alerts
+```
+
+**Response:**
+```json
+{
+  "alerts": [
+    {
+      "id": 1,
+      "request_number": "001/2025",
+      "vip_codename": "EAGLE_ONE",
+      "status": "under_process",
+      "flight_date": "2025-01-11",
+      "hours_until_flight": 18.5,
+      "alert_level": "warning",
+      "departure_airport": "DXB",
+      "arrival_airport": "JFK"
+    }
+  ]
+}
+```
+
+**Alert Levels:**
+- `critical`: 0-6 hours until flight
+- `urgent`: 6-12 hours until flight
+- `warning`: 12-24 hours until flight
+- `notice`: 24-48 hours until flight
+- `info`: 48-72 hours until flight
+
+## Specialized Views
+
+### Get Completed Flights
+```http
+GET /api/v1/operations/completed_flights
+```
+
+**Query Parameters:**
+- `start_date` (date): Filter from date
+- `end_date` (date): Filter to date
+- `vip_id` (integer): Filter by VIP profile
+- `page` (integer): Page number
+
+**Response:**
+```json
+{
+  "completed_flights": [
+    {
+      "id": 1,
+      "request_number": "001/2025",
+      "vip_codename": "EAGLE_ONE",
+      "date": "2025-01-10",
+      "passenger_count": 3,
+      "legs": [
+        {
+          "departure_airport": "DXB",
+          "arrival_airport": "JFK",
+          "departure_time": "08:00",
+          "arrival_time": "20:00"
+        }
+      ],
+      "completed_at": "2025-01-10T22:00:00Z"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 5,
+    "total_count": 48
+  }
+}
+```
+
+### Get Canceled Flights
+```http
+GET /api/v1/operations/canceled_flights
+```
+
+**Response:**
+```json
+{
+  "canceled_flights": [
+    {
+      "id": 2,
+      "request_number": "002/2025",
+      "vip_codename": "EAGLE_TWO",
+      "date": "2025-01-12",
+      "passenger_count": 2,
+      "status": "unable",
+      "unable_reason": "Weather conditions",
+      "canceled_at": "2025-01-11T14:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+# Admin API
+
+## User Management
+
+### Create New User
+```http
+POST /api/v1/admin/users
+```
+
+**Roles Required**: Operations Admin, Management, Super Admin
+
+**Request Body:**
+```json
+{
+  "user": {
+    "email": "newuser@example.com",
+    "role": "operations_staff",
+    "first_name": "John",
+    "last_name": "Doe",
+    "phone_number": "+1234567890"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "message": "User created successfully",
+  "user": {
+    "id": 5,
+    "email": "newuser@example.com",
+    "role": "operations_staff",
+    "status": "active",
+    "first_name": "John",
+    "last_name": "Doe",
+    "created_at": "2025-01-10T10:00:00Z"
+  }
+}
+```
+
+### List All Users
+```http
+GET /api/v1/admin/users
+```
+
+**Query Parameters:**
+- `role` (string): Filter by user role
+- `status` (string): Filter by user status
+- `search` (string): Search by email
+- `page` (integer): Page number
+- `per_page` (integer): Items per page
+
+**Response:**
+```json
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@example.com",
+      "role": "super_admin",
+      "status": "active",
+      "first_name": "System",
+      "last_name": "Admin",
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 3,
+    "total_count": 25
+  }
+}
+```
+
+### Update User
+```http
+PUT /api/v1/admin/users/:id
+```
+
+**Request Body:**
+```json
+{
+  "user": {
+    "role": "operations_admin",
+    "status": "active",
+    "first_name": "Updated",
+    "last_name": "Name"
+  }
+}
+```
+
+### Soft Delete/Freeze User
+```http
+DELETE /api/v1/admin/users/:id
+```
+
+**Response:**
+```json
+{
+  "message": "User frozen successfully"
+}
+```
+
+## VIP Profile Management
+
+### Create VIP Profile
+```http
+POST /api/v1/admin/vip_profiles
+```
+
+**Request Body:**
+```json
+{
+  "vip_profile": {
+    "actual_name": "Important Person",
+    "security_clearance_level": 5,
+    "preferred_aircraft_type": "Boeing 737",
+    "special_requirements": "Dietary restrictions: vegetarian"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "message": "VIP Profile created successfully",
+  "vip_profile": {
+    "id": 3,
+    "internal_codename": "PHOENIX_THREE",
+    "actual_name": "Important Person",
+    "security_clearance_level": 5,
+    "status": "active"
+  }
+}
+```
+
+### List VIP Profiles
+```http
+GET /api/v1/admin/vip_profiles
+```
+
+**Query Parameters:**
+- `search` (string): Search by name or codename
+- `security_clearance` (integer): Filter by clearance level
+
+**Response:**
+```json
+{
+  "vip_profiles": [
+    {
+      "id": 1,
+      "internal_codename": "EAGLE_ONE",
+      "actual_name": "VIP Name (visible to admin only)",
+      "security_clearance_level": 5,
+      "status": "active"
+    }
+  ]
+}
+```
+
+### Update VIP Profile
+```http
+PUT /api/v1/admin/vip_profiles/:id
+```
+
+### Delete VIP Profile
+```http
+DELETE /api/v1/admin/vip_profiles/:id
+```
+
+## Flight Request Admin Functions
+
+### Admin Delete Flight Request
+```http
+DELETE /api/v1/admin/flight_requests/:id
+```
+
+**Response:**
+```json
+{
+  "message": "Flight request deleted successfully"
+}
+```
+
+### Finalize Flight Request
+```http
+PUT /api/v1/admin/flight_requests/:id/finalize
+```
+
+**Response:**
+```json
+{
+  "message": "Flight request finalized successfully",
+  "flight_request": {
+    "id": 1,
+    "status": "completed",
+    "finalized_by": 3,
+    "completed_at": "2025-01-10T16:00:00Z"
+  }
+}
+```
+
+---
+
 # Testing
 
 ## Test Coverage
-- Flight Requests: 21 tests covering controllers and services
+- Flight Requests: 21 tests covering controllers and services  
 - VIP Profiles: 6 tests covering basic CRUD operations
-- All tests passing with comprehensive assertions
+- Operations API: 14 tests covering request processing and alerts
+- Admin API: 22 tests covering user and VIP management
+- All core functionality tested with comprehensive assertions
 
 ## Running Tests
 ```bash
@@ -455,6 +884,20 @@ bin/rails test
 - ✅ Preferences management system
 - ✅ Identity protection features
 - ✅ Comprehensive audit logging
+
+### Operations API
+- ✅ Request processing workflow (receive, review, process, unable, complete)
+- ✅ Request modification with audit trail
+- ✅ Alert system with deadline notifications (72h-6h intervals)
+- ✅ Completed flights and canceled flights reporting
+- ✅ Role-based access control for operations staff
+
+### Admin API
+- ✅ Complete user management (create, list, update, soft delete)
+- ✅ VIP profile administration with tiered access
+- ✅ Flight request admin functions (delete, finalize)
+- ✅ Comprehensive audit logging for all admin actions
+- ✅ Advanced filtering and pagination
 
 ### Security
 - ✅ Role-based authorization on all endpoints

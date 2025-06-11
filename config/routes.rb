@@ -26,6 +26,56 @@ Rails.application.routes.draw do
       resources :vip_profiles do
         resources :sources, controller: "vip_sources"
       end
+
+      # Operations endpoints
+      namespace :operations do
+        resources :requests, only: [] do
+          member do
+            put :receive
+            put :review
+            put :process, action: :start_process
+            put :unable
+            put :complete
+            put :modify
+          end
+        end
+        
+        get :alerts
+        get :completed_flights
+        get :canceled_flights
+      end
+
+      # Admin endpoints
+      namespace :admin do
+        resources :users do
+          collection do
+            post :create, to: "admin#create_user"
+            get :index, to: "admin#list_users"
+          end
+          member do
+            put :update, to: "admin#update_user"
+            delete :destroy, to: "admin#delete_user"
+          end
+        end
+
+        resources :vip_profiles do
+          collection do
+            post :create, to: "admin#create_vip_profile"
+            get :index, to: "admin#list_vip_profiles"
+          end
+          member do
+            put :update, to: "admin#update_vip_profile"
+            delete :destroy, to: "admin#delete_vip_profile"
+          end
+        end
+
+        resources :flight_requests, only: [] do
+          member do
+            delete :destroy, to: "admin#delete_flight_request"
+            put :finalize, to: "admin#finalize_flight_request"
+          end
+        end
+      end
     end
   end
 

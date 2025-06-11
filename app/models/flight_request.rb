@@ -8,22 +8,20 @@ class FlightRequest < ApplicationRecord
     received: 1,
     under_review: 2,
     under_process: 3,
-    done: 4,
-    unable: 5
+    completed: 4,
+    done: 4,  # alias for backward compatibility
+    unable: 5,
+    deleted: 6
   }
 
   validates :request_number, presence: true, uniqueness: true
   validates :flight_date, presence: true
-  validates :departure_airport_code, presence: true
-  validates :arrival_airport_code, presence: true
   validates :number_of_passengers, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true
-  validate :either_departure_or_arrival_time_present
-  validate :departure_and_arrival_different
   validate :flight_date_not_in_past
 
-  scope :completed, -> { where(status: :done) }
-  scope :pending, -> { where.not(status: [ :done, :unable ]) }
+  scope :completed, -> { where(status: [:done, :completed]) }
+  scope :pending, -> { where.not(status: [:done, :completed, :unable, :deleted]) }
   scope :overdue, -> { where("flight_date < ?", Date.current).pending }
   scope :upcoming, ->(days = 7) { where(flight_date: Date.current..Date.current + days.days) }
   scope :not_deleted, -> { where(deleted_at: nil) }
@@ -37,7 +35,7 @@ class FlightRequest < ApplicationRecord
   end
 
   def overdue_alerts
-    return [] unless flight_date && status != "done"
+    return [] unless flight_date && !["done", "completed", "unable", "deleted"].include?(status)
 
     hours_until_flight = ((flight_date.beginning_of_day - Time.current) / 1.hour).round
     alerts = []
@@ -67,19 +65,6 @@ class FlightRequest < ApplicationRecord
     end
 
     self.request_number = sprintf("%03d/%d", next_number, year)
-  end
-
-  def either_departure_or_arrival_time_present
-    if departure_time.blank? && arrival_time.blank?
-      errors.add(:base, "Either departure time or arrival time must be specified")
-    end
-  end
-
-  def departure_and_arrival_different
-    if departure_airport_code.present? && arrival_airport_code.present? &&
-       departure_airport_code == arrival_airport_code
-      errors.add(:arrival_airport_code, "must be different from departure airport")
-    end
   end
 
   def flight_date_not_in_past

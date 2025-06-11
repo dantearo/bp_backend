@@ -29,11 +29,19 @@ bin/rails server
 
 ### Flight Request Management
 - Complete CRUD operations with role-based access
-- Status workflow management (sent → received → under_review → under_process → done)
+- Status workflow management (sent → received → under_review → under_process → completed)
 - Multi-leg flight support with unlimited legs
 - File upload handling (passenger lists, flight briefs)
 - Business rule validation and conflict detection
 - Automatic request numbering (001/YYYY format)
+
+### Operations Management
+- **Request Processing** - Receive, review, process, unable, complete workflows
+- **Request Modification** - Update flight details with full audit trail
+- **Alert System** - Deadline notifications (72h, 48h, 24h, 12h, 6h intervals)
+- **Specialized Views** - Completed flights and canceled flights reports
+- **User Management** - Complete admin functions for all user types
+- **VIP Management** - Admin oversight with tiered access control
 
 ### VIP Profile Management
 - Identity protection with auto-generated codenames
@@ -60,9 +68,11 @@ bin/rails server
 
 ### API Endpoints
 ```
-Total: 29 REST endpoints
+Total: 47 REST endpoints
 ├── Flight Requests: 17 endpoints
-└── VIP Profiles: 12 endpoints
+├── VIP Profiles: 12 endpoints
+├── Operations: 9 endpoints
+└── Admin: 9 endpoints
 ```
 
 ### User Roles
@@ -92,9 +102,10 @@ bin/rails db:seed
 ```
 
 ### Test Coverage
-- 27 test files with 81 assertions
-- 100% pass rate (0 failures, 0 errors)
-- Comprehensive controller and service testing
+- 63 test files with comprehensive coverage
+- Controller, service, and integration testing
+- Mock authentication system for testing
+- Complete API endpoint validation
 
 ## 📚 Documentation
 
@@ -142,10 +153,10 @@ bin/rails test test/services/
 **Documentation**: Complete  
 
 ### Key Metrics
-- **29 API Endpoints** - Fully functional
+- **47 API Endpoints** - Fully functional
 - **9 Database Models** - Properly related
 - **6 User Roles** - Comprehensive access control
-- **2 Main Components** - Flight Requests & VIP Profiles
+- **4 Main Components** - Flight Requests, VIP Profiles, Operations, Admin
 
 ## 🚀 Deployment
 

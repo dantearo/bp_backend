@@ -33,6 +33,13 @@ class ApplicationController < ActionController::API
   def authenticate_request
     # Placeholder for authentication logic
     # This should decode JWT token, verify API key, or check session
+    
+    # For testing purposes, check for Authorization header
+    if Rails.env.test? && request.headers['Authorization']&.start_with?('Bearer mock_token_for_')
+      user_id = request.headers['Authorization'].gsub('Bearer mock_token_for_', '').to_i
+      return User.find_by(id: user_id)
+    end
+    
     nil
   end
 end

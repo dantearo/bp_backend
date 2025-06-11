@@ -92,7 +92,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_200808) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "received_at"
+    t.datetime "reviewed_at"
+    t.datetime "processed_at"
+    t.datetime "unable_at"
+    t.bigint "finalized_by"
     t.index ["deleted_at"], name: "index_flight_requests_on_deleted_at"
+    t.index ["finalized_by"], name: "index_flight_requests_on_finalized_by"
     t.index ["flight_date"], name: "index_flight_requests_on_flight_date"
     t.index ["request_number"], name: "index_flight_requests_on_request_number", unique: true
     t.index ["source_of_request_user_id", "status"], name: "index_flight_requests_on_source_of_request_user_id_and_status"
@@ -159,6 +165,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_200808) do
   add_foreign_key "audit_logs", "users"
   add_foreign_key "authentication_logs", "users"
   add_foreign_key "flight_request_legs", "flight_requests"
+  add_foreign_key "flight_requests", "users", column: "finalized_by"
   add_foreign_key "flight_requests", "users", column: "source_of_request_user_id"
   add_foreign_key "flight_requests", "vip_profiles"
   add_foreign_key "vip_profiles", "users", column: "created_by_user_id"
