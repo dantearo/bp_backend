@@ -22,6 +22,10 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      resources :vip_profiles do
+        resources :sources, controller: "vip_sources"
+      end
     end
   end
 

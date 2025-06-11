@@ -29,3 +29,11 @@ vip_user:
   uae_pass_id: null
   role: 1
   status: 0
+
+another_source:
+  first_name: "Another"
+  last_name: "Source"
+  email: null
+  uae_pass_id: "AE987654321"
+  role: 0
+  status: 0
