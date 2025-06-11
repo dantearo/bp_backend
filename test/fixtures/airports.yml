@@ -1,0 +1,27 @@
+# Basic airport fixtures for testing
+dxb:
+  iata_code: "DXB"
+  icao_code: "OMDB"
+  name: "Dubai International Airport"
+  city: "Dubai"
+  country: "United Arab Emirates"
+  timezone: "Asia/Dubai"
+  operational_status: 0
+
+jfk:
+  iata_code: "JFK"
+  icao_code: "KJFK"
+  name: "John F. Kennedy International Airport"
+  city: "New York"
+  country: "United States"
+  timezone: "America/New_York"
+  operational_status: 0
+
+lax:
+  iata_code: "LAX"
+  icao_code: "KLAX"
+  name: "Los Angeles International Airport"
+  city: "Los Angeles"
+  country: "United States"
+  timezone: "America/Los_Angeles"
+  operational_status: 0

@@ -1,14 +1,14 @@
 class AuditLog < ApplicationRecord
   belongs_to :user, optional: true
 
-  enum :action_type, { 
-    create: 0, 
-    read: 1, 
-    update: 2, 
-    delete: 3, 
-    login: 4, 
-    logout: 5, 
-    status_change: 6 
+  enum :action_type, {
+    create: 0,
+    read: 1,
+    update: 2,
+    delete: 3,
+    login: 4,
+    logout: 5,
+    status_change: 6
   }, prefix: :action
 
   validates :action_type, presence: true

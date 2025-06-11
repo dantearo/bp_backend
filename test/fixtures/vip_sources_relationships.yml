@@ -1,0 +1,13 @@
+source_to_vip_one:
+  vip_profile: one
+  source_of_request_user: source_user
+  delegation_level: "full"
+  approval_authority: "all"
+  status: 0
+
+source_to_vip_two:
+  vip_profile: two
+  source_of_request_user: source_user
+  delegation_level: "limited"
+  approval_authority: "domestic"
+  status: 0

@@ -1,0 +1,31 @@
+source_user:
+  first_name: "John"
+  last_name: "Doe"
+  email: null
+  uae_pass_id: "AE123456789"
+  role: 0
+  status: 0
+
+operations_staff:
+  first_name: "Jane"
+  last_name: "Smith"
+  email: "jane.smith@presidentialflight.ae"
+  uae_pass_id: null
+  role: 2
+  status: 0
+
+admin:
+  first_name: "Admin"
+  last_name: "User"
+  email: "admin@presidentialflight.ae"
+  uae_pass_id: null
+  role: 3
+  status: 0
+
+vip_user:
+  first_name: "VIP"
+  last_name: "Person"
+  email: "vip@example.com"
+  uae_pass_id: null
+  role: 1
+  status: 0

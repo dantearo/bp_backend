@@ -1,11 +1,11 @@
 class VipProfile < ApplicationRecord
-  belongs_to :created_by_user, class_name: 'User'
+  belongs_to :created_by_user, class_name: "User"
   has_many :vip_sources_relationships, dependent: :destroy
   has_many :source_of_request_users, through: :vip_sources_relationships
   has_many :flight_requests, dependent: :destroy
 
   encrypts :actual_name
-  
+
   enum :status, { active: 0, inactive: 1, deleted: 2 }
 
   validates :internal_codename, presence: true, uniqueness: true
@@ -26,5 +26,9 @@ class VipProfile < ApplicationRecord
     else
       internal_codename
     end
+  end
+
+  def codename
+    internal_codename
   end
 end

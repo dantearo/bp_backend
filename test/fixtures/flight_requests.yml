@@ -1,0 +1,23 @@
+one:
+  request_number: "001/2025"
+  flight_date: <%= Date.current + 30.days %>
+  departure_airport_code: "DXB"
+  arrival_airport_code: "JFK"
+  departure_time: "08:00"
+  arrival_time: null
+  number_of_passengers: 3
+  status: 0
+  vip_profile: one
+  source_of_request_user: source_user
+
+two:
+  request_number: "002/2025"
+  flight_date: <%= Date.current + 40.days %>
+  departure_airport_code: "LAX"
+  arrival_airport_code: "LHR"
+  departure_time: null
+  arrival_time: "18:30"
+  number_of_passengers: 2
+  status: 1
+  vip_profile: two
+  source_of_request_user: source_user

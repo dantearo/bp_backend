@@ -1,8 +1,8 @@
 class Airport < ApplicationRecord
-  enum :operational_status, { 
-    active: 0, 
-    inactive: 1, 
-    restricted: 2 
+  enum :operational_status, {
+    active: 0,
+    inactive: 1,
+    restricted: 2
   }
 
   validates :iata_code, presence: true, uniqueness: true, length: { is: 3 }

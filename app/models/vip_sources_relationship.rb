@@ -1,6 +1,6 @@
 class VipSourcesRelationship < ApplicationRecord
   belongs_to :vip_profile
-  belongs_to :source_of_request_user, class_name: 'User'
+  belongs_to :source_of_request_user, class_name: "User"
 
   enum :status, { active: 0, inactive: 1 }
 

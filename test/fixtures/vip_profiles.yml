@@ -1,0 +1,13 @@
+one:
+  internal_codename: "EAGLE_ONE"
+  actual_name: "Distinguished Person"
+  security_clearance_level: 5
+  created_by_user: admin
+  status: 0
+
+two:
+  internal_codename: "FALCON_TWO"
+  actual_name: "Important Dignitary"
+  security_clearance_level: 3
+  created_by_user: admin
+  status: 0
