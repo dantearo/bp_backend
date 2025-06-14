@@ -45,6 +45,22 @@ Rails.application.routes.draw do
         get :canceled_flights
       end
 
+      # Airport endpoints
+      resources :airports, only: [], param: :code do
+        collection do
+          get :search
+        end
+        member do
+          get :operational_status
+        end
+      end
+      get 'airports/:code', to: 'airports#show', constraints: { code: /[A-Z]{3,4}/ }
+
+      # Integration endpoints
+      namespace :integrations do
+        post :check_availability
+      end
+
       # Admin endpoints
       namespace :admin do
         resources :users do

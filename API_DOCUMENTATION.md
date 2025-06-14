@@ -2,7 +2,7 @@
 
 ## Overview
 
-This API provides comprehensive flight request management and VIP profile management functionality for the Presidential Flight Booking Platform. All endpoints are secured and support role-based access control with sophisticated identity protection mechanisms.
+This API provides comprehensive flight request management, VIP profile management, and integration services functionality for the Presidential Flight Booking Platform. All endpoints are secured and support role-based access control with sophisticated identity protection mechanisms.
 
 ## Base URL
 ```
@@ -904,6 +904,247 @@ bin/rails test
 - ✅ Input validation and error handling
 - ✅ Soft delete functionality
 - ✅ Audit trail for all operations
+
+### Quality
+- ✅ Comprehensive test coverage
+- ✅ Clean code with no linting errors
+- ✅ Complete API documentation
+- ✅ Production-ready implementation
+
+---
+
+# Integration Services API
+
+## Airport Data Integration
+
+### Search Airports
+```http
+GET /api/v1/airports/search?query={query}&limit={limit}
+```
+
+**Query Parameters:**
+- `query` (string): Search term (airport name, city, country, IATA/ICAO code)
+- `limit` (integer): Maximum results to return (default: 10, max: 50)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "iata_code": "DXB",
+      "icao_code": "OMDB",
+      "name": "Dubai International Airport",
+      "city": "Dubai",
+      "country": "UAE",
+      "display_name": "Dubai International Airport (DXB)",
+      "full_location": "Dubai, UAE",
+      "timezone": "Asia/Dubai",
+      "operational_status": "active"
+    }
+  ],
+  "meta": {
+    "query": "Dubai",
+    "count": 2,
+    "limit": 10
+  }
+}
+```
+
+### Get Airport Details
+```http
+GET /api/v1/airports/{code}
+```
+
+**Parameters:**
+- `code` (string): IATA (3 letters) or ICAO (4 letters) airport code
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "iata_code": "DXB",
+    "icao_code": "OMDB",
+    "name": "Dubai International Airport",
+    "city": "Dubai",
+    "country": "UAE",
+    "timezone": "Asia/Dubai",
+    "latitude": 25.2532,
+    "longitude": 55.3657,
+    "operational_status": "active",
+    "operational_info": {
+      "status": "operational",
+      "message": "Airport is operational"
+    },
+    "display_name": "Dubai International Airport (DXB)",
+    "full_location": "Dubai, UAE"
+  }
+}
+```
+
+### Check Operational Status
+```http
+GET /api/v1/airports/{code}/operational_status
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "airport_code": "DXB",
+    "operational_status": "operational",
+    "message": "Airport is operational",
+    "checked_at": "2025-06-14T15:44:50Z"
+  }
+}
+```
+
+## Aircraft Availability Integration
+
+### Check Aircraft Availability
+```http
+POST /api/v1/integrations/check_availability
+```
+
+**Request Body:**
+```json
+{
+  "departure_date": "2024-12-25",
+  "departure_time": "14:00",
+  "arrival_date": "2024-12-25",
+  "arrival_time": "18:00",
+  "passenger_count": 8,
+  "aircraft_type": "Gulfstream G650",
+  "departure_airport": "DXB",
+  "arrival_airport": "LHR"
+}
+```
+
+**Required Fields:**
+- `departure_date`: Flight departure date (YYYY-MM-DD)
+- `departure_time`: Departure time (HH:MM, 24-hour format)
+- `passenger_count`: Number of passengers (integer > 0)
+
+**Optional Fields:**
+- `arrival_date`: Flight arrival date
+- `arrival_time`: Arrival time
+- `aircraft_type`: Preferred aircraft type
+- `departure_airport`: Departure airport code
+- `arrival_airport`: Arrival airport code
+
+**Response (Available):**
+```json
+{
+  "success": true,
+  "available": true,
+  "aircraft_count": 3,
+  "recommended_aircraft": {
+    "tail_number": "A6-PF3",
+    "aircraft_type": "Gulfstream G650",
+    "capacity": 8,
+    "home_base": "DXB",
+    "status": "Available for flight operations",
+    "availability_score": 175
+  },
+  "all_available_aircraft": [...],
+  "checked_at": "2025-06-14T15:44:50Z",
+  "flight_details": {
+    "departure": "2024-12-25T14:00:00Z",
+    "arrival": "2024-12-25T18:00:00Z",
+    "duration_estimate": "4.0 hours"
+  },
+  "integration_checks": {
+    "departure_airport": {
+      "status": "operational",
+      "message": "Airport is operational"
+    },
+    "arrival_airport": {
+      "status": "operational", 
+      "message": "Airport is operational"
+    },
+    "flight_constraints": {
+      "status": "restricted",
+      "constraints": ["International flight - diplomatic clearance may be required"],
+      "restrictions": [],
+      "clearances_required": [],
+      "message": "Constraints: International flight - diplomatic clearance may be required",
+      "checked_at": "2025-06-14T15:44:50Z"
+    }
+  }
+}
+```
+
+**Response (Unavailable):**
+```json
+{
+  "success": true,
+  "available": false,
+  "message": "No aircraft available for the requested time and requirements",
+  "suggestions": [
+    "Try a different departure time",
+    "Consider reducing passenger count",
+    "Check availability for alternative dates"
+  ],
+  "checked_at": "2025-06-14T15:44:50Z"
+}
+```
+
+## Flight Constraints Service
+
+The flight constraints service is automatically called during availability checking and provides:
+
+### Operational Constraints
+- **Flight restriction checking**: Weekend, holiday, and operational restrictions
+- **Security clearance validation**: VIP clearance level verification
+- **Destination access verification**: Airport accessibility based on clearance
+- **Route constraints**: International flight requirements, diplomatic clearance
+- **Airspace restrictions**: Traffic congestion and routing constraints
+
+### Security Clearance Levels
+- `level_1`: Basic clearance
+- `level_2`: Standard clearance  
+- `level_3`: High security clearance
+- `level_4`: Maximum security clearance
+
+### Restriction Types
+- **Airport Restrictions**: Operational status, special clearance requirements
+- **Route Restrictions**: International routes, diplomatic clearance, airspace constraints
+- **Temporal Restrictions**: Weekend operations, holiday limitations
+- **Security Restrictions**: VIP clearance requirements, destination access
+
+## Error Responses
+
+All integration services follow standard error response format:
+
+```json
+{
+  "success": false,
+  "error": "Error message",
+  "errors": ["Detailed error 1", "Detailed error 2"]
+}
+```
+
+**Common HTTP Status Codes:**
+- `200`: Success
+- `400`: Bad Request (validation errors)
+- `404`: Not Found (airport/resource not found)
+- `500`: Internal Server Error
+
+## Integration Data Management
+
+### Seeding Data
+```bash
+bin/rails integration_data:seed
+```
+
+### Statistics
+```bash
+bin/rails integration_data:stats
+```
+
+---
 
 ### Quality
 - ✅ Comprehensive test coverage
