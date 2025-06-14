@@ -636,6 +636,236 @@ GET /api/v1/operations/canceled_flights
 
 ---
 
+# Management Dashboard API
+
+## Management Reporting Endpoints
+
+### Get Dashboard Data
+```http
+GET /api/v1/management/dashboard
+```
+
+**Description:** Retrieves comprehensive dashboard metrics and key performance indicators (KPIs).
+
+**Query Parameters:**
+- `date_range` (string): Time period filter (today, week, month, quarter, year)
+- `status` (string): Filter by request status
+- `vip_profile_id` (integer): Filter by specific VIP profile
+- `source_user_id` (integer): Filter by source user
+
+**Response:**
+```json
+{
+  "kpis": {
+    "total_requests": 245,
+    "active_requests": 34,
+    "completed_requests": 189,
+    "canceled_requests": 22,
+    "average_processing_time": 24.5,
+    "completion_rate": 77.14,
+    "vip_requests": 156,
+    "urgent_requests": 8
+  },
+  "request_status_summary": {
+    "status_distribution": {
+      "Sent": 15,
+      "Received": 12,
+      "Under Review": 7,
+      "Processing": 5,
+      "Completed": 189,
+      "Canceled": 17
+    },
+    "total_requests": 245,
+    "status_percentages": {
+      "Sent": 6.12,
+      "Received": 4.90,
+      "Under Review": 2.86,
+      "Processing": 2.04,
+      "Completed": 77.14,
+      "Canceled": 6.94
+    }
+  },
+  "user_activity_overview": {
+    "active_users_count": 45,
+    "top_request_sources": {
+      "Chief of Staff": 34,
+      "Security Detail": 28,
+      "Protocol Office": 22
+    },
+    "operations_staff_workload": {
+      "Operations Manager A": 28,
+      "Operations Staff B": 24,
+      "Operations Staff C": 19
+    }
+  },
+  "system_health_metrics": {
+    "database_size": "N/A - Implementation needed for postgresql",
+    "total_flight_requests": 245,
+    "total_vip_profiles": 15,
+    "total_users": 67,
+    "audit_logs_count": 1234,
+    "system_alerts": [
+      {
+        "type": "warning",
+        "message": "3 requests pending for more than 48 hours",
+        "count": 3
+      }
+    ],
+    "average_response_time": "Response time tracking not implemented"
+  },
+  "recent_activity": [
+    {
+      "id": 245,
+      "request_number": "245/2025",
+      "status": "Sent",
+      "vip_name": "EAGLE_ONE",
+      "created_at": "2025-06-14T10:30:00Z",
+      "source_user": "Chief of Staff",
+      "priority": "high"
+    }
+  ],
+  "period": {
+    "start_date": "2025-05-15T00:00:00Z",
+    "end_date": "2025-06-14T23:59:59Z",
+    "days": 30
+  }
+}
+```
+
+### Get Request Reports
+```http
+GET /api/v1/management/reports/requests
+```
+
+**Description:** Generate comprehensive reports on flight requests with date range filtering and grouping options.
+
+**Query Parameters:**
+- `start_date` (date): Report start date (ISO format)
+- `end_date` (date): Report end date (ISO format)
+- `group_by` (string): Grouping option (date, week, month, vip, user, priority, status)
+- `status` (string): Filter by request status
+- `vip_profile_id` (integer): Filter by VIP profile
+- `source_user_id` (integer): Filter by source user
+- `priority` (string): Filter by priority level
+- `operations_staff_id` (integer): Filter by operations staff
+- `format` (string): Export format (json, csv, pdf)
+
+**Response (JSON format):**
+```json
+{
+  "report_metadata": {
+    "generated_at": "2025-06-14T15:30:00Z",
+    "period": {
+      "start_date": "2025-05-01T00:00:00Z",
+      "end_date": "2025-05-31T23:59:59Z",
+      "days": 31
+    },
+    "total_requests": 78,
+    "filters_applied": {
+      "status": "completed",
+      "priority": "high"
+    }
+  },
+  "summary_statistics": {
+    "total_requests": 78,
+    "status_breakdown": {
+      "completed": 78
+    },
+    "priority_breakdown": {
+      "high": 78
+    },
+    "completion_metrics": {
+      "completed_count": 78,
+      "canceled_count": 0,
+      "active_count": 0,
+      "completion_rate": 100.0
+    },
+    "time_metrics": {
+      "average_processing_time_hours": 18.5,
+      "fastest_completion_hours": 4.2,
+      "slowest_completion_hours": 72.8
+    }
+  },
+  "grouped_data": {
+    "completed": 78
+  },
+  "vip_activity_report": {
+    "total_vip_requests": 65,
+    "vip_breakdown": {
+      "EAGLE_ONE": 25,
+      "PHOENIX_TWO": 18,
+      "THUNDER_THREE": 12
+    },
+    "vip_completion_rates": {
+      "EAGLE_ONE": {
+        "total": 25,
+        "completed": 25,
+        "completion_rate": 100.0
+      }
+    },
+    "high_activity_vips": {
+      "EAGLE_ONE": 25,
+      "PHOENIX_TWO": 18
+    }
+  },
+  "operations_efficiency_report": {
+    "staff_workload": {
+      "Operations Manager A": 35,
+      "Operations Staff B": 28,
+      "Operations Staff C": 15
+    },
+    "processing_time_by_staff": {
+      "Operations Manager A": 16.8,
+      "Operations Staff B": 19.2,
+      "Operations Staff C": 21.5
+    },
+    "status_transition_metrics": {
+      "average_time_to_receive": "Requires audit log analysis",
+      "average_time_to_review": "Requires audit log analysis",
+      "average_time_to_process": "Requires audit log analysis"
+    },
+    "bottleneck_analysis": []
+  },
+  "detailed_requests": [
+    {
+      "id": 245,
+      "request_number": "245/2025",
+      "status": "completed",
+      "priority": "high",
+      "vip_codename": "EAGLE_ONE",
+      "source_user": "Chief of Staff",
+      "operations_staff": "Operations Manager A",
+      "created_at": "2025-05-28T10:00:00Z",
+      "processed_at": "2025-05-29T06:30:00Z",
+      "processing_time_hours": 20.5,
+      "legs_count": 2,
+      "has_passenger_list": true,
+      "has_flight_brief": true
+    }
+  ]
+}
+```
+
+**CSV Export:**
+When `format=csv` is specified, returns a CSV file with columns:
+- Request Number, Status, Priority, VIP Codename, Source User, Operations Staff, Created At, Processed At, Processing Time (Hours), Legs Count, Has Passenger List, Has Flight Brief
+
+**PDF Export:**
+When `format=pdf` is specified, returns a formatted PDF report (requires additional implementation).
+
+**Security:**
+- Requires `management` or `super_admin` role
+- Access denied for users without proper permissions
+
+**Error Responses:**
+```json
+{
+  "error": "Access denied. Management privileges required."
+}
+```
+
+---
+
 # Admin API
 
 ## User Management

@@ -91,6 +91,10 @@ Rails.application.routes.draw do
         end
       end
 
+      # Management endpoints
+      get 'management/dashboard', to: 'management#dashboard'
+      get 'management/reports/requests', to: 'management#reports'
+
       # Admin endpoints
       namespace :admin do
         resources :users do
