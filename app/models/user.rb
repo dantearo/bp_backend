@@ -5,6 +5,9 @@ class User < ApplicationRecord
   has_many :created_vip_profiles, class_name: "VipProfile", foreign_key: "created_by_user_id"
   has_many :audit_logs, dependent: :destroy
   has_many :authentication_logs, dependent: :destroy
+  has_many :alerts, dependent: :destroy
+  has_many :received_notifications, class_name: "Notification", foreign_key: "recipient_id", dependent: :destroy
+  has_many :acknowledged_alerts, class_name: "Alert", foreign_key: "acknowledged_by_id", dependent: :nullify
 
   enum :role, {
     source_of_request: 0,

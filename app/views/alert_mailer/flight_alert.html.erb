@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .header { background-color: #1a365d; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; }
+    .alert-box { background-color: #fed7d7; border: 1px solid #fc8181; border-radius: 8px; padding: 15px; margin: 20px 0; }
+    .flight-details { background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin: 20px 0; }
+    .footer { background-color: #f1f5f9; color: #64748b; padding: 10px; text-align: center; font-size: 12px; }
+    .priority-critical { border-left: 5px solid #ef4444; }
+    .priority-urgent { border-left: 5px solid #f97316; }
+    .priority-high { border-left: 5px solid #eab308; }
+    .priority-medium { border-left: 5px solid #3b82f6; }
+    .priority-low { border-left: 5px solid #10b981; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🚁 Presidential Flight Alert System</h1>
+  </div>
+
+  <div class="content">
+    <h2>Dear <%= @recipient.full_name %>,</h2>
+    
+    <div class="alert-box priority-<%= @alert.priority %>">
+      <h3><%= @notification.subject %></h3>
+      <p><%= simple_format(@notification.content) %></p>
+    </div>
+
+    <div class="flight-details">
+      <h3>Flight Request Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>Request Number:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><%= @flight_request.request_number %></td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>VIP Profile:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><%= @flight_request.vip_profile.codename %></td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>Status:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><%= @flight_request.status.humanize %></td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>Passengers:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><%= @flight_request.number_of_passengers %></td>
+        </tr>
+      </table>
+
+      <% if @flight_request.flight_request_legs.any? %>
+        <h4>Flight Schedule</h4>
+        <% @flight_request.flight_request_legs.order(:departure_time).each_with_index do |leg, index| %>
+          <div style="margin: 10px 0; padding: 10px; background-color: white; border-radius: 4px;">
+            <strong>Leg <%= index + 1 %>:</strong> <%= leg.departure_airport_code %> → <%= leg.arrival_airport_code %><br>
+            <% if leg.departure_time %>
+              <strong>Departure:</strong> <%= leg.departure_time.strftime('%B %d, %Y at %H:%M %Z') %><br>
+            <% end %>
+            <% if leg.arrival_time %>
+              <strong>Arrival:</strong> <%= leg.arrival_time.strftime('%B %d, %Y at %H:%M %Z') %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="#" style="background-color: #1a365d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+        Access Management System
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Presidential Flight Alert System - Automated Alert<br>
+    Do not reply to this email.</p>
+  </div>
+</body>
+</html>

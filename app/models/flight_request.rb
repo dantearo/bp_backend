@@ -2,6 +2,7 @@ class FlightRequest < ApplicationRecord
   belongs_to :vip_profile
   belongs_to :source_of_request_user, class_name: "User"
   has_many :flight_request_legs, dependent: :destroy
+  has_many :alerts, dependent: :destroy
 
   enum :status, {
     sent: 0,

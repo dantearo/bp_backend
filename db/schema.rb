@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_163249) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_164952) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_163249) do
     t.datetime "updated_at", null: false
     t.index ["iata_code"], name: "index_airports_on_iata_code", unique: true
     t.index ["icao_code"], name: "index_airports_on_icao_code", unique: true
+  end
+
+  create_table "alerts", force: :cascade do |t|
+    t.string "alert_type"
+    t.bigint "flight_request_id", null: false
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.text "message"
+    t.integer "priority"
+    t.integer "status"
+    t.datetime "acknowledged_at"
+    t.bigint "acknowledged_by_id"
+    t.datetime "escalated_at"
+    t.integer "escalation_level"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["acknowledged_by_id"], name: "index_alerts_on_acknowledged_by_id"
+    t.index ["flight_request_id"], name: "index_alerts_on_flight_request_id"
+    t.index ["user_id"], name: "index_alerts_on_user_id"
   end
 
   create_table "audit_logs", force: :cascade do |t|
@@ -119,6 +139,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_163249) do
     t.index ["vip_profile_id"], name: "index_flight_requests_on_vip_profile_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.string "notification_type"
+    t.bigint "recipient_id", null: false
+    t.bigint "alert_id", null: false
+    t.string "subject"
+    t.text "content"
+    t.integer "delivery_method"
+    t.integer "status"
+    t.datetime "sent_at"
+    t.datetime "failed_at"
+    t.string "failure_reason"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["alert_id"], name: "index_notifications_on_alert_id"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "uae_pass_id"
@@ -173,12 +211,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_163249) do
     t.index ["vip_profile_id"], name: "index_vip_sources_relationships_on_vip_profile_id"
   end
 
+  add_foreign_key "alerts", "flight_requests"
+  add_foreign_key "alerts", "users"
+  add_foreign_key "alerts", "users", column: "acknowledged_by_id"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "authentication_logs", "users"
   add_foreign_key "flight_request_legs", "flight_requests"
   add_foreign_key "flight_requests", "users", column: "finalized_by"
   add_foreign_key "flight_requests", "users", column: "source_of_request_user_id"
   add_foreign_key "flight_requests", "vip_profiles"
+  add_foreign_key "notifications", "alerts"
+  add_foreign_key "notifications", "users", column: "recipient_id"
   add_foreign_key "vip_profiles", "users", column: "created_by_user_id"
   add_foreign_key "vip_sources_relationships", "users", column: "source_of_request_user_id"
   add_foreign_key "vip_sources_relationships", "vip_profiles"

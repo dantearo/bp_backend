@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  alert_type: MyString
+  flight_request: one
+  user: one
+  title: MyString
+  message: MyText
+  priority: 1
+  status: 1
+  acknowledged_at: 2025-06-14 20:49:22
+  acknowledged_by: one
+  escalated_at: 2025-06-14 20:49:22
+  escalation_level: 1
+  metadata: 
+
+two:
+  alert_type: MyString
+  flight_request: two
+  user: two
+  title: MyString
+  message: MyText
+  priority: 1
+  status: 1
+  acknowledged_at: 2025-06-14 20:49:22
+  acknowledged_by: two
+  escalated_at: 2025-06-14 20:49:22
+  escalation_level: 1
+  metadata: 

@@ -81,6 +81,16 @@ Rails.application.routes.draw do
         get 'compliance_report', to: 'analytics#compliance_report'
       end
 
+      # Alert endpoints
+      resources :alerts, only: [:index, :show, :update] do
+        collection do
+          get :dashboard
+        end
+        member do
+          put :acknowledge
+        end
+      end
+
       # Admin endpoints
       namespace :admin do
         resources :users do

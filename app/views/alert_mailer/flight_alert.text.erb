@@ -1,0 +1,27 @@
+Dear <%= @recipient.full_name %>,
+
+<%= @notification.content %>
+
+Flight Request Details:
+- Request Number: <%= @flight_request.request_number %>
+- VIP Profile: <%= @flight_request.vip_profile.codename %>
+- Status: <%= @flight_request.status.humanize %>
+- Passengers: <%= @flight_request.number_of_passengers %>
+
+<% if @flight_request.flight_request_legs.any? %>
+Flight Schedule:
+<% @flight_request.flight_request_legs.order(:departure_time).each_with_index do |leg, index| %>
+Leg <%= index + 1 %>: <%= leg.departure_airport_code %> → <%= leg.arrival_airport_code %>
+Departure: <%= leg.departure_time.strftime('%B %d, %Y at %H:%M %Z') if leg.departure_time %>
+<% if leg.arrival_time %>
+Arrival: <%= leg.arrival_time.strftime('%B %d, %Y at %H:%M %Z') %>
+<% end %>
+
+<% end %>
+<% end %>
+
+Please log into the Presidential Flight Management System to take appropriate action.
+
+---
+Presidential Flight Alert System
+Do not reply to this email.
