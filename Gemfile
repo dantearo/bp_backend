@@ -23,6 +23,12 @@ gem "solid_cable"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+# Pagination for audit logs
+gem "pagy", "~> 6.0"
+
+# Groupdate for time-based analytics
+gem "groupdate"
+
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "kamal", require: false
 

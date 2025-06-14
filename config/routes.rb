@@ -61,6 +61,26 @@ Rails.application.routes.draw do
         post :check_availability
       end
 
+      # Audit and logging routes
+      scope :audit do
+        get 'logs', to: 'audit#logs'
+        get 'logs/:id', to: 'audit#show'
+        get 'user_activity/:user_id', to: 'audit#user_activity'
+        get 'request_history/:request_id', to: 'audit#request_history'
+        get 'export', to: 'audit#export'
+        get 'security_events', to: 'audit#security_events'
+      end
+
+      # Analytics routes
+      scope :analytics do
+        get 'dashboard', to: 'analytics#dashboard'
+        get 'user_activity', to: 'analytics#user_activity'
+        get 'request_lifecycle', to: 'analytics#request_lifecycle'
+        get 'system_usage', to: 'analytics#system_usage'
+        get 'security_monitoring', to: 'analytics#security_monitoring'
+        get 'compliance_report', to: 'analytics#compliance_report'
+      end
+
       # Admin endpoints
       namespace :admin do
         resources :users do

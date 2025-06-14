@@ -1154,6 +1154,149 @@ bin/rails integration_data:stats
 
 ---
 
+# Audit & Logging API
+
+## Overview
+
+The Audit & Logging API provides comprehensive audit trail functionality with sophisticated filtering, analytics, and compliance reporting capabilities. All audit endpoints are secured and require administrative privileges.
+
+## Audit Log Query
+
+### List Audit Logs
+```http
+GET /api/v1/audit/logs
+```
+
+**Access Level:** Operations Admin, Management, Super Admin
+
+**Query Parameters:**
+- `page` (integer): Page number for pagination
+- `per_page` (integer): Items per page (default: 50, max: 100)
+- `user_id` (integer): Filter by user ID
+- `action_type` (string): Filter by action (create, read, update, delete, login, logout, status_change)
+- `resource_type` (string): Filter by resource type (FlightRequest, VipProfile, User, Authentication, etc.)
+- `resource_id` (integer): Filter by specific resource ID
+- `ip_address` (string): Filter by IP address
+- `start_date` (date): Filter from date (YYYY-MM-DD)
+- `end_date` (date): Filter to date (YYYY-MM-DD)
+- `search` (string): Search in user email, IP address, user agent, or metadata
+- `sort` (string): Sort by 'user', 'action', 'resource', or 'created_at' (default)
+
+**Response:**
+```json
+{
+  "audit_logs": [
+    {
+      "id": 1,
+      "user": {
+        "id": 5,
+        "email": "admin@presidentialflight.ae",
+        "role": "operations_admin"
+      },
+      "action_type": "create",
+      "resource_type": "FlightRequest",
+      "resource_id": 123,
+      "ip_address": "192.168.1.10",
+      "user_agent": "Mozilla/5.0...",
+      "created_at": "2025-01-15T10:30:00Z",
+      "summary": {
+        "event_type": "request_created",
+        "status": 201,
+        "duration": 245.5
+      }
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 25,
+    "total_count": 1247,
+    "per_page": 50,
+    "next_page": 2,
+    "prev_page": null
+  },
+  "filters_applied": {
+    "user_id": 5,
+    "action_type": "create",
+    "date_range": "2025-01-01 to 2025-01-31"
+  }
+}
+```
+
+### Get Individual Audit Log
+```http
+GET /api/v1/audit/logs/{id}
+```
+
+**Access Level:** Operations Admin, Management, Super Admin
+
+### Get User Activity
+```http
+GET /api/v1/audit/user_activity/{user_id}
+```
+
+**Access Level:** 
+- Users can view their own activity
+- Operations Admin, Management, Super Admin can view any user's activity
+
+### Get Flight Request History
+```http
+GET /api/v1/audit/request_history/{request_id}
+```
+
+**Access Level:** Operations Admin, Management, Super Admin
+
+### Get Security Events
+```http
+GET /api/v1/audit/security_events
+```
+
+**Access Level:** Operations Admin, Management, Super Admin
+
+### Export Audit Logs
+```http
+GET /api/v1/audit/export
+```
+
+**Access Level:** Operations Admin, Management, Super Admin
+
+# Analytics API
+
+## Overview
+
+The Analytics API provides comprehensive insights into user activity patterns, request lifecycle metrics, system usage statistics, and security monitoring.
+
+### Get Dashboard Data
+```http
+GET /api/v1/analytics/dashboard
+```
+
+### Get User Activity Patterns
+```http
+GET /api/v1/analytics/user_activity
+```
+
+### Get Request Processing Analytics
+```http
+GET /api/v1/analytics/request_lifecycle
+```
+
+### Get System Usage Statistics
+```http
+GET /api/v1/analytics/system_usage
+```
+
+### Get Security Monitoring Data
+```http
+GET /api/v1/analytics/security_monitoring
+```
+
+### Get Compliance Report
+```http
+GET /api/v1/analytics/compliance_report
+```
+
+---
+
 **API Status**: ✅ Production Ready  
 **Last Updated**: June 2025  
 **Version**: 1.0  
