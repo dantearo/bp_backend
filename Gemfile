@@ -24,7 +24,7 @@ gem "solid_cable"
 gem "bootsnap", require: false
 
 # Pagination for audit logs
-gem "pagy", "~> 6.0"
+gem "pagy", "~> 9.3"
 
 # Groupdate for time-based analytics
 gem "groupdate"
